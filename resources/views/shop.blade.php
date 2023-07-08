@@ -21,7 +21,7 @@
                             <div class="col-sm-6 col-md-6 col-lg-4 ftco-animate" category="{{$product->category_id}}">
                                 <div class="product">
                                     <a href="/shop/{{$product->product_name}}" class="img-prod"><img class="img-fluid"
-                                            src="{{ asset('assets/images/' . $product->cover) }}" alt="Colorlib Template">
+                                            src="/storage/{{$product->cover}}" alt="Colorlib Template">
                                         @if (!is_null($product->discount))
                                             <span class="status">{{$product->discount}}%</span>
                                         @endif
@@ -32,8 +32,8 @@
                                         <div class="d-flex">
                                             <div class="pricing">
                                                 <p class="price"><span class="mr-2 price-dc">${{$product->price}}</span>
-                                                    @if (!is_null($product->discount_price))
-                                                        <span class="price-sale">${{$product->discount_price}}</span>
+                                                    @if (!is_null($product->discount))
+                                                        <span class="price-sale">${{$product->price * ((100 - $product->discount) / 100)}}</span>
                                                     @endif
                                                 </p>
                                             </div>

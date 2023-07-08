@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <section class="ftco-section bg-light">
+    <section class="ftco-section bg-light" style="padding: 30px;">
         <div class="container">
             <div class="row justify-content-center mb-3 pb-3">
                 <div class="col-md-12 heading-section text-center ftco-animate">
@@ -17,8 +17,8 @@
                     <div class="col-sm col-md-6 col-lg ftco-animate">
                         <div class="product">
                             <a href="#" class="img-prod"><img class="img-fluid"
-                                    src="{{ asset('assets/images/' . $products[$i]->cover) }}" alt="Colorlib Template">
-                                @if (!is_null($products[$i]->discount))
+                                    src="/storage/{{$products[$i]->cover}}" alt="Colorlib Template">
+                                @if ($products[$i]->discount != 0)
                                     <span class="status">{{$products[$i]->discount}}%</span>
                                 @endif
                                 <div class="overlay"></div>
@@ -27,12 +27,16 @@
                                 <h3><a href="#">{{$products[$i]->product_name}}</a></h3>
                                 <div class="d-flex">
                                     <div class="pricing">
-                                        <p class="price"><span class="mr-2 price-dc">${{$products[$i]->price}}</span>
-                                            @if (!is_null($products[$i]->discount_price))
-                                                <span class="price-sale">${{$products[$i]->discount_price}}</span>
-                                            @endif
-                                        </p>
+                                        @if (($products[$i]->discount) != 0)
+                                            <p class="price"><span class="mr-2 price-dc">${{$products[$i]->price}}</span>
+                                                <span class="price-sale">${{ number_format($products[$i]->price * ((100 - $products[$i]->discount) / 100), 2, '.', '.'); }}</span>
+                                            </p>
+                                        @else
+                                            <p class="price"><span class="mr-2 price">${{$products[$i]->price}}</span></p>
+                                        @endif
+                                        
                                     </div>
+                                    
                                     {{-- <div class="rating">
                                         <p class="text-right">
                                             <a href="#"><span class="ion-ios-star-outline"></span></a>

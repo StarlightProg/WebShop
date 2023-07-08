@@ -60,7 +60,6 @@
                       <th>Description</th>
                       <th>Size</th>
                       <th>Discount</th>
-                      <th>Price_Discount</th>
                       <th>Category</th>
                     </tr>
                     </thead>
@@ -69,10 +68,10 @@
                     @foreach ($products as $product)
                         <tr>
                             <td>{{$product->id}}</td>
-                            <td><a href="{{ asset('assets/images/' . $product->cover) }}" target="_blank">{{$product->cover}} </a></td>
+                            <td><a href="/storage/{{$product->cover}}" target="_blank">{{$product->cover}} </a></td>
                             <td> 
                               @foreach (json_decode($product->images) as $image)
-                                <p><a href="{{ asset('assets/images/' . $image) }}" target="_blank">{{$image}}</a></p>
+                                <p><a href="/storage/{{$image}}" target="_blank">{{$image}}</a></p>
                               @endforeach
                             </td>
                             <td>{{$product->product_name}}</td>
@@ -80,7 +79,6 @@
                             <td>{{$product->description}}</td>
                             <td>{{$product->size}}</td>
                             <td>{{$product->discount}}</td>
-                            <td>{{$product->discount_price}}</td>
                             <td>{{$product->category_id}}</td>
                         </tr>
                     @endforeach
@@ -128,7 +126,7 @@
                             </div>
 
                             <div class="form-group custom-file mb-3">
-                                <input type="file" class="custom-file-input" id="product-images" name="product-images[]" multiple required>
+                                <input type="file" class="custom-file-input" id="product-images" name="product-images[]" multiple>
                                 <label class="form-group custom-file-label" for="product-images">Product images</label>
                             </div>
 
@@ -139,10 +137,7 @@
                                 <input type="text" name="product-size" class="form-control" placeholder="Enter size" required>
                              </div>
                              <div class="form-group">
-                                <input type="text" name="product-discount" class="form-control" placeholder="Enter discount percent" required>
-                             </div>
-                             <div class="form-group">
-                                <input type="text" name="product-discount-price" class="form-control" placeholder="Enter discount price" required>
+                                <input type="text" name="product-discount" class="form-control" placeholder="Enter discount percent">
                              </div>
                              
                              <div class="form-group mb-3">

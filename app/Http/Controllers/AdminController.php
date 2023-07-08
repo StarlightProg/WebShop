@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
@@ -17,34 +18,35 @@ class AdminController extends Controller
     }
 
     public function addProduct(Request $request){
-            // $validator = Validator::make($request->all(), [
-            //     'cover' => 'image|max:16384',
-            //     'images' => 'image|max:32768',
-            // ]);
 
-            // if($validator->fails()) {
-            //     return response()->json(['error' => 'Invalid file format'], 422);
-            // }
         $filename_cover = uniqid() . '.' . $request->file('product-cover')->getClientOriginalExtension();
-        $request->file('product-cover')->move(public_path('assets/images'), $filename_cover);
+        $cover_path = $request->file('product-cover')->storeAs('assets', $filename_cover, 'public');
+
+        $image = Image::make(public_path("storage/{$cover_path}"))->fit(800,1200);
+        $image->save();
 
         $images_json = [];
-    
-        foreach ($request->file('product-images') as $image) {
-            $filename_image = uniqid() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('assets/images'), $filename_image);
-            $images_json[] = $filename_image;
+        
+        if(!is_null($request->file('product-images'))){
+            foreach ($request->file('product-images') as $image) {
+                $filename_image = uniqid() . '.' . $image->getClientOriginalExtension();
+                $image_path = $image->storeAs('assets', $filename_image, 'public');
+
+                $image = Image::make(public_path("storage/{$image_path}"))->fit(800,1200);
+                $image->save();
+
+                $images_json[] = $image_path;
+            }
         }
         
         Product::firstOrCreate(
-            ["cover" => $filename_cover,
+            ["cover" => $cover_path,
             "images" => json_encode($images_json),
             "product_name" => $request->{"product-name"},
             "price" => (float) $request->{"product-price"},
             "description" => $request->{"product-description"},
             "size" => $request->{"product-size"},
             "discount" => (int) $request->{"product-discount"},
-            "discount_price" =>(float) $request->{"product-discount-price"},
             "category_id" => (int) $request->{"product-caregory"}
         ]);
 

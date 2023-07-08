@@ -18,7 +18,7 @@
             <div class="row">
                 <div class="col-lg-6 mb-5 ftco-animate">
                     <a href="{{ asset('assets/images/menu-2.jpg') }}" class="image-popup"><img
-                            src="{{ asset('assets/images/' . $product->cover) }}" class="img-fluid" alt="Colorlib Template"></a>
+                            src="/storage/{{$product->cover}}" class="img-fluid" alt="Colorlib Template"></a>
                 </div>
                 <div class="col-lg-6 product-details pl-md-5 ftco-animate">
                     <h3>{{$product->product_name}}</h3>

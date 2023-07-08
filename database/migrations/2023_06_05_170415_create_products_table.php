@@ -14,13 +14,12 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) { 
             $table->id(); 
             $table->string('cover'); 
-            $table->json('images'); 
+            $table->json('images')->nullable(); 
             $table->string('product_name')->unique(); 
             $table->decimal('price', 10, 2); 
             $table->text('description'); 
             $table->string('size'); 
             $table->integer('discount')->nullable();
-            $table->decimal('discount_price', 10, 2)->nullable();
             $table->foreignId('category_id')->constrained(); 
         });
     }

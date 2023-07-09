@@ -16,6 +16,8 @@ class CartService{
             $goods = session()->get('cart.items', []);
         }
 
+        $products = [];
+
         foreach($goods as $good){
             $products[] = [
                 'product' => Product::where('id', $good['product_id'])->first(),

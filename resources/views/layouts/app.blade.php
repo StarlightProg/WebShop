@@ -49,6 +49,9 @@
                                 class="icon-shopping_cart"></span>[<x-cart-count />]</a></li>
 
                     @if (Auth::check())
+                        @can('control products')
+                            <li class="nav-item"><a href="/admin" class="nav-link">Admin panel</a></li>
+                        @endcan
                         <li class="nav-item"><p class="nav-link"> {{ Auth::user()->name }} </p></li>
                         <li class="nav-item"><a href="logout" class="nav-link">Logout</a></li>
                     @else

@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/shop', [ShopController::class, 'index']);
 
@@ -55,9 +55,11 @@ Route::get('/logout', 'App\Http\Controllers\AuthController@logout')->name('logou
 
 Route::get('/admin','App\Http\Controllers\AdminController@index')->name('admin');
 
-Route::controller(AdminController::class)->group(function () {
-    Route::get('/admin', 'index')->name('admin.index');
-    Route::post('/admin/addproduct', 'addproduct')->name('admin.addproduct');
+Route::group(['middleware' => 'admin'], function(){
+    Route::controller(AdminController::class)->group(function () {
+        Route::get('/admin', 'index')->name('admin.index');
+        Route::post('/admin/addproduct', 'addproduct')->name('admin.addproduct');
+    });
 });
 
 // Auth::routes();

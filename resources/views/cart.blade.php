@@ -42,7 +42,7 @@
                                         </td>
 
                                         <td class="image-prod">
-                                            <div class="img" style="background-image:url({{ asset('assets/images/' . $item['product']['cover']) }});"></div>
+                                            <div class="img" style="background-image:url({{ "/storage/" . $item['product']['cover']}});"></div>
                                         </td>
 
                                         <td class="product-name">

@@ -5,6 +5,7 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -25,8 +26,10 @@ Route::get('/shop', [ShopController::class, 'index']);
 
 Route::controller(ShopController::class)->group(function (){
     Route::get('/shop', 'index')->name('shop.index');
-    Route::get('/shop/{product}', 'show')->name('shop.show');
+    // Route::get('/shop/{product}', 'show')->name('shop.show');
 });
+
+Route::get('/shop/{product}', [ProductController::class, 'index']);
 
 Route::get('/product-single', function () {
     return view('product-single');

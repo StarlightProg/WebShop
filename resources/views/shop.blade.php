@@ -20,9 +20,9 @@
                         @foreach ($products as $product)
                             <div class="col-sm-6 col-md-6 col-lg-4 ftco-animate" category="{{$product->category_id}}">
                                 <div class="product">
-                                    <a href="/shop/{{$product->product_name}}" class="img-prod"><img class="img-fluid"
+                                    <a href="#" class="img-prod"><img class="img-fluid"
                                             src="/storage/{{$product->cover}}" alt="Colorlib Template">
-                                        @if (!is_null($product->discount))
+                                        @if ($product->discount != 0)
                                             <span class="status">{{$product->discount}}%</span>
                                         @endif
                                         <div class="overlay"></div>
@@ -31,11 +31,14 @@
                                         <h3><a href="#">{{$product->product_name}}</a></h3>
                                         <div class="d-flex">
                                             <div class="pricing">
-                                                <p class="price"><span class="mr-2 price-dc">${{$product->price}}</span>
-                                                    @if (!is_null($product->discount))
-                                                        <span class="price-sale">${{$product->price * ((100 - $product->discount) / 100)}}</span>
-                                                    @endif
-                                                </p>
+                                                @if ($product->discount != 0)
+                                                    <p class="price"><span class="mr-2 price-dc">${{$product->price}}</span>
+                                                        <span class="price-sale">${{ number_format($product->price * ((100 - $product->discount) / 100), 2, '.', '.'); }}</span>
+                                                    </p>
+                                                @else
+                                                    <p class="price"><span class="mr-2 price">${{$product->price}}</span></p>
+                                                @endif
+                                                
                                             </div>
                                         </div>
                                         <p class="bottom-area d-flex px-3">
@@ -67,7 +70,7 @@
                 <div class="col-md-4 col-lg-2 sidebar">
                     @foreach ($categories as $item)
                         <div class="sidebar-box-2">
-                            <h2 class="heading mb-4"><a href="#">{{$item->category_name}}</a></h2>
+                            <h2 class="heading mb-4"><a href="{{ route('shop.index', ['category_id' => $item->id]) }}">{{$item->category_name}}</a></h2>
                         </div>
                     @endforeach
                 </div>

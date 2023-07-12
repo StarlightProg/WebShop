@@ -20,7 +20,7 @@ return new class extends Migration
             $table->text('description'); 
             $table->string('size'); 
             $table->integer('discount')->nullable();
-            $table->foreignId('category_id')->constrained(); 
+            $table->foreignId('category_id')->constrained('category'); 
         });
     }
 

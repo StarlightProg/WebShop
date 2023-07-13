@@ -13,9 +13,9 @@ class ShopController extends Controller
         $categoryId = $request->input('category_id');
 
         if ($categoryId) {
-            $products = Product::where('category_id', $categoryId)->get();
+            $products = Product::where('category_id', $categoryId)->paginate(3);
         } else {
-            $products = Product::all();
+            $products = Product::paginate(3);
         }
 
         $categories = Category::all();

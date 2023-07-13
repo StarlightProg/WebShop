@@ -15,8 +15,9 @@
             <div class="row">
                 @for ($i = 0; $i < ((count($products) < 4) ? count($products) : 4); $i++)
                     <div class="col-sm col-md-6 col-lg ftco-animate">
-                        <div class="product">
-                            <a href="#" class="img-prod"><img class="img-fluid"
+                        <x-product-logo :product="$products[$i]"></x-product-logo>
+                        {{-- <div class="product">
+                            <a href='/shop/{{$products[$i]->product_name}}' class="img-prod"><img class="img-fluid"
                                     src="/storage/{{$products[$i]->cover}}" alt="Colorlib Template">
                                 @if ($products[$i]->discount != 0)
                                     <span class="status">{{$products[$i]->discount}}%</span>
@@ -37,15 +38,7 @@
                                         
                                     </div>
                                     
-                                    {{-- <div class="rating">
-                                        <p class="text-right">
-                                            <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                            <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                            <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                            <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                            <a href="#"><span class="ion-ios-star-outline"></span></a>
-                                        </p>
-                                    </div> --}}
+                                    
                                 </div>
                                 <form method="POST" action="{{ route('cart.store') }}">
                                     @csrf
@@ -58,7 +51,16 @@
                                 </form>
                                 
                             </div>
-                        </div>
+                        </div> --}}
+                        {{-- <div class="rating">
+                                        <p class="text-right">
+                                            <a href="#"><span class="ion-ios-star-outline"></span></a>
+                                            <a href="#"><span class="ion-ios-star-outline"></span></a>
+                                            <a href="#"><span class="ion-ios-star-outline"></span></a>
+                                            <a href="#"><span class="ion-ios-star-outline"></span></a>
+                                            <a href="#"><span class="ion-ios-star-outline"></span></a>
+                                        </p>
+                                    </div> --}}
                     </div>
                 @endfor
 

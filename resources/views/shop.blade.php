@@ -19,56 +19,15 @@
                     <div class="row">
                         @foreach ($products as $product)
                             <div class="col-sm-6 col-md-6 col-lg-4 ftco-animate" category="{{$product->category_id}}">
-                                <div class="product">
-                                    <a href="#" class="img-prod"><img class="img-fluid"
-                                            src="/storage/{{$product->cover}}" alt="Colorlib Template">
-                                        @if ($product->discount != 0)
-                                            <span class="status">{{$product->discount}}%</span>
-                                        @endif
-                                        <div class="overlay"></div>
-                                    </a>
-                                    <div class="text py-3 px-3">
-                                        <h3><a href="#">{{$product->product_name}}</a></h3>
-                                        <div class="d-flex">
-                                            <div class="pricing">
-                                                @if ($product->discount != 0)
-                                                    <p class="price"><span class="mr-2 price-dc">${{$product->price}}</span>
-                                                        <span class="price-sale">${{ number_format($product->price * ((100 - $product->discount) / 100), 2, '.', '.'); }}</span>
-                                                    </p>
-                                                @else
-                                                    <p class="price"><span class="mr-2 price">${{$product->price}}</span></p>
-                                                @endif
-                                                
-                                            </div>
-                                        </div>
-                                        <p class="bottom-area d-flex px-3">
-                                            <a href="#" class="add-to-cart text-center py-2 mr-1"><span>Add to cart <i
-                                                        class="ion-ios-add ml-1"></i></span></a>
-                                        </p>
-                                    </div>
-                                </div>
+                                <x-product-logo :product="$product"></x-product-logo>
                             </div>    
                         @endforeach
                     </div>
+
                     <div>
                         {{$products->links()}}
                     </div>
-                    {{-- @include('pagination.shop_pagination')
-                    <div class="row mt-5">
-                        <div class="col text-center">
-                            <div class="block-27">
-                                <ul>
-                                    <li><a href="#">&lt;</a></li>
-                                    <li class="active"><span>1</span></li>
-                                    <li><a href="#">2</a></li>
-                                    <li><a href="#">3</a></li>
-                                    <li><a href="#">4</a></li>
-                                    <li><a href="#">5</a></li>
-                                    <li><a href="#">&gt;</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div> --}}
+
                 </div>
 
                 <div class="col-md-4 col-lg-2 sidebar">

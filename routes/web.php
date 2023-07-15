@@ -46,6 +46,7 @@ Route::get('/cart', function () {
 Route::controller(CartController::class)->group(function () {
     Route::get('/cart', 'index')->name("cart.index"); 
     Route::post('/cart', 'store')->name("cart.store");  
+    Route::delete('/cart/{product}', 'delete')->name("cart.delete");  
 });
 
 Route::get('/login', 'App\Http\Controllers\AuthController@showLoginForm')->name('login');

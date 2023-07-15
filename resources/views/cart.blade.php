@@ -38,8 +38,20 @@
                                         $totalPrice += $item['product']['price'] * $item['quantity'];
                                     ?>
                                     <tr class="text-center">
-                                        <td class="product-remove"><a href="#"><span class="ion-ios-close"></span></a>
-                                        </td>
+                                        
+                                        
+                                        <form method="POST" action="/cart/{{$item['product']['id']}}">
+                                            @method('DELETE')
+                                            @csrf
+                                            <td class="product-remove">
+                                                <button style="border: 1px solid rgba(0, 0, 0, 0.1);
+                                                padding: 0px 20px;
+                                                color: #000000; cursor: pointer;" type="submit"><span class="ion-ios-close"></span></button>
+                                            </td>
+                                        </form>
+
+                                        {{-- <td class="product-remove"><a href="#"><span class="ion-ios-close"></span></a>
+                                        </td> --}}
 
                                         <td class="image-prod">
                                             <div class="img" style="background-image:url({{ "/storage/" . $item['product']['cover']}});"></div>
@@ -70,19 +82,6 @@
                 <div class="col col-lg-5 col-md-6 mt-5 cart-wrap ftco-animate">
                     <div class="cart-total mb-3">
                         <h3>Cart Totals</h3>
-                        {{-- <p class="d-flex">
-                            <span>Subtotal</span>
-                            <span>$20.60</span>
-                        </p>
-                        <p class="d-flex">
-                            <span>Delivery</span>
-                            <span>$0.00</span>
-                        </p>
-                        <p class="d-flex">
-                            <span>Discount</span>
-                            <span>$3.00</span>
-                        </p>
-                        <hr> --}}
                         <p class="d-flex total-price">
                             <span>Total</span>
                             <span>${{$totalPrice}}</span>

@@ -32,14 +32,15 @@ class CartController extends Controller
             return redirect()->back()->with('error', 'Товар не найден');
         });
 
-        if(Auth::check()){
-            $this->cartService->authStore($productId, $quantity);
-        }
-        else{
-            $this->cartService->sessionStore($productId, $quantity);
-        }
+        $this->cartService->store($productId, $quantity);
 
         return redirect()->back()->with('success', 'Товар добавлен в корзину');
         
+    }
+
+    public function delete($product_id){
+        $this->cartService->delete($product_id);
+
+        return redirect()->back()->with('success', 'Товар удалён из корзины');
     }
 }

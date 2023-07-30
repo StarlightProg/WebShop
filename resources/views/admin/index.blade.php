@@ -37,19 +37,19 @@
               <div class="card-header border-transparent">
                 <h3 class="card-title">Latest Orders</h3>
 
-                <div class="card-tools">
+                {{-- <div class="card-tools">
                   <button type="button" class="btn btn-tool" data-card-widget="collapse">
                     <i class="fas fa-minus"></i>
                   </button>
                   <button type="button" class="btn btn-tool" data-card-widget="remove">
                     <i class="fas fa-times"></i>
                   </button>
-                </div>
+                </div> --}}
               </div>
               <!-- /.card-header -->
               <div class="card-body p-0">
                 <div class="table-responsive">
-                  <table class="table m-0">
+                  <table class="table m-0 all-products">
                     <thead>
                     <tr>
                       <th>ID</th>
@@ -61,6 +61,8 @@
                       <th>Size</th>
                       <th>Discount</th>
                       <th>Category</th>
+                      <th></th>
+                      <th></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -80,6 +82,20 @@
                             <td>{{$product->size}}</td>
                             <td>{{$product->discount}}</td>
                             <td>{{$product->category_id}}</td>
+                            <td>
+                              <form method="GET" action="{{ route('admin.edit', ['id' => $product->id]) }}">
+                                <button type="submit" class="btn btn-primary mb-3">Edit</button>
+                              </form>  
+                            </td>
+                            <td>
+                              <form method="POST" action="{{ route('admin.delete', ['product' => $product->id]) }}">
+                                @method('DELETE')
+                                @csrf
+                                <button type="submit" class="btn btn-tool">
+                                  <i class="fas fa-times"></i>
+                                </button>
+                              </form>
+                            </td>
                         </tr>
                     @endforeach
                     {{-- <tr>

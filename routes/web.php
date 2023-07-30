@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Auth;
@@ -35,8 +36,9 @@ Route::get('/product-single', function () {
     return view('product-single');
 });
 
-Route::get('/checkout', function () {
-    return view('checkout');
+Route::controller(CheckoutController::class)->group(function () {
+    Route::get('/checkout', 'index')->name("checkout.index");
+    Route::post('/checkout', 'store')->name("checkout.store"); 
 });
 
 Route::get('/cart', function () {
@@ -63,6 +65,10 @@ Route::group(['middleware' => 'admin'], function(){
     Route::controller(AdminController::class)->group(function () {
         Route::get('/admin', 'index')->name('admin.index');
         Route::post('/admin/addproduct', 'addproduct')->name('admin.addproduct');
+        // Route::patch('/admin/{product}', 'get')->name('admin.product');
+        Route::get('/admin/edit/{id}', 'edit')->name('admin.edit');
+        Route::patch('/admin/edit/{id}', 'update')->name('admin.update');
+        Route::delete('/admin/{product}', 'delete')->name('admin.delete');
     });
 });
 

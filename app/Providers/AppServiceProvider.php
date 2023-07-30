@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Laravel\Cashier\Cashier;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,5 +22,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::defaultView("vendor.pagination.default");
+        Cashier::calculateTaxes();
     }
 }

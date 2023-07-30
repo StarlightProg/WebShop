@@ -1,167 +1,304 @@
 @extends('layouts.app')
 
+@section('extra-head')
+  {{-- <link rel="stylesheet" href="assets/css/checkout.css" /> --}}
+  <script src="https://js.stripe.com/v3/"></script>
+  {{-- <script src="assets/js/checkout.js" defer></script> --}}
+@endsection
+
 @section('content')
 
-<div class="hero-wrap hero-bread" style="background-image: url('{{ asset('assets/images/bg_6.jpg') }}');">
-    <div class="container">
-      <div class="row no-gutters slider-text align-items-center justify-content-center">
-        <div class="col-md-9 ftco-animate text-center">
-            <p class="breadcrumbs"><span class="mr-2"><a href="/">Home</a></span> <span>Checkout</span></p>
-          <h1 class="mb-0 bread">Checkout</h1>
+<div class="container">
+  <div class="row">
+    <div class="col-md-6"> 
+    @if (session()->has('success_message'))
+        <div class="spacer"></div>
+        <div class="alert alert-success">
+            {{ session()->get('success_message') }}
+        </div>
+    @endif
+
+    @if(count($errors) > 0)
+        <div class="spacer"></div>
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{!! $error !!}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <h1 class="checkout-heading stylish-heading">Checkout</h1>
+    <div class="checkout-section">
+        <div>
+            <form action="{{ route('checkout.store') }}" method="POST" id="payment-form">
+                @csrf
+                <h2>Billing Details</h2>
+
+                <input type="hidden" class="form-control" id="paymentid" name="paymentid" value="ooo">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    @if (auth()->user())
+                        <input type="email" class="form-control" id="email" name="email" value="{{ auth()->user()->email }}" readonly>
+                    @else
+                        <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" required>
+                    @endif
+                </div>
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" value="{{ old('name') }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" class="form-control" id="address" name="address" value="{{ old('address') }}" required>
+                </div>
+
+                <div class="half-form">
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" class="form-control" id="city" name="city" value="{{ old('city') }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="province">Province</label>
+                        <input type="text" class="form-control" id="province" name="province" value="{{ old('province') }}" required>
+                    </div>
+                </div> <!-- end half-form -->
+
+                <div class="half-form">
+                    <div class="form-group">
+                        <label for="postalcode">Postal Code</label>
+                        <input type="text" class="form-control" id="postalcode" name="postalcode" value="{{ old('postalcode') }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="text" class="form-control" id="phone" name="phone" value="{{ old('phone') }}" required>
+                    </div>
+                </div> <!-- end half-form -->
+
+                <div class="spacer"></div>
+
+                <h2>Payment Details</h2>
+
+                <div class="form-group">
+                    <label for="name_on_card">Name on Card</label>
+                    <input type="text" class="form-control" id="name_on_card" name="name_on_card" value="">
+                </div>
+
+                <div class="form-group">
+                    <label for="card-element">
+                      Credit or debit card
+                    </label>
+                    <div id="card-element">
+                      <!-- a Stripe Element will be inserted here. -->
+                    </div>
+
+                    <!-- Used to display form errors -->
+                    <div id="card-errors" role="alert"></div>
+                </div>
+                <div class="spacer"></div>
+
+                <button type="submit" id="complete-order" class="button-primary full-width">Complete Order</button>
+
+
+            </form>
+
         </div>
       </div>
-    </div>
+      </div>
+      <div class="col-md-6">
+
+        <div class="checkout-table-container">
+            <h2>Your Order</h2>
+            <hr class="line">
+
+            <div class="checkout-table" style="text-align:center">
+                <?php
+                  $totalPrice = 0; 
+                  $totalProductPrice = 0;
+                ?>
+                @foreach ($goods as $item)
+                <?php 
+                  $totalProductPrice += $item['product']['price'] * $item['quantity'];
+                  $totalPrice += $totalProductPrice;
+                ?>
+                <div class="checkout-table-row row d-flex align-items-center">
+                    <div class="checkout-table-row-left col-md-4">
+                        <img src="{{ "/storage/" . $item['product']['cover'] }}" style="width: 100%;" alt="item" class="checkout-table-img">
+                        
+                    </div> <!-- end checkout-table -->
+                    <div class="checkout-item-details col-md-4">
+                      <div class="checkout-table-item">{{ $item['product']['product_name'] }}</div>
+                      <div class="checkout-table-price mt-3">${{$item['product']['price']}}</div>
+                    </div>
+                    <div class="checkout-table-row-right col-md-4">
+                        <div class="checkout-table-quantity">Quantity: {{ $item['quantity'] }}</div>
+                    </div>
+                </div> <!-- end checkout-table-row -->
+                <hr class="line">
+                @endforeach
+
+            </div> <!-- end checkout-table -->
+
+            <div class="checkout-totals">
+                <div class="checkout-totals-left">
+                    {{-- Subtotal <br>
+                    @if (session()->has('coupon'))
+                        Discount ({{ session()->get('coupon')['name'] }}) :
+                        <br>
+                        <hr>  
+                        New Subtotal <br>
+                    @endif
+                    Tax ({{config('cart.tax')}}%)<br> --}}
+                    <span class="checkout-totals-total">Total</span>
+
+                </div>
+
+                <div class="checkout-totals-right">
+                    {{-- {{ presentPrice(Cart::subtotal()) }} <br>
+                    @if (session()->has('coupon'))
+                        -{{ presentPrice($discount) }} <br>
+                        <hr>
+                        {{ presentPrice($newSubtotal) }} <br>
+                    @endif
+                    {{ presentPrice($newTax) }} <br> --}}
+                    <span class="checkout-totals-total">${{ $totalPrice }}</span>
+
+                </div>
+            </div> <!-- end checkout-totals -->
+        </div>
+      </div>
+     <!-- end checkout-section -->
   </div>
+</div>
 
-  <section class="ftco-section">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-xl-8 ftco-animate">
-                      <form action="#" class="billing-form">
-                          <h3 class="mb-4 billing-heading">Billing Details</h3>
-                <div class="row align-items-end">
-                    <div class="col-md-6">
-                  <div class="form-group">
-                      <label for="firstname">Firt Name</label>
-                    <input type="text" class="form-control" placeholder="">
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                      <label for="lastname">Last Name</label>
-                    <input type="text" class="form-control" placeholder="">
-                  </div>
-              </div>
-              <div class="w-100"></div>
-                  <div class="col-md-12">
-                      <div class="form-group">
-                          <label for="country">State / Country</label>
-                          <div class="select-wrap">
-                        <div class="icon"><span class="ion-ios-arrow-down"></span></div>
-                        <select name="" id="" class="form-control">
-                            <option value="">France</option>
-                          <option value="">Italy</option>
-                          <option value="">Philippines</option>
-                          <option value="">South Korea</option>
-                          <option value="">Hongkong</option>
-                          <option value="">Japan</option>
-                        </select>
-                      </div>
-                      </div>
-                  </div>
-                  <div class="w-100"></div>
-                  <div class="col-md-6">
-                      <div class="form-group">
-                      <label for="streetaddress">Street Address</label>
-                    <input type="text" class="form-control" placeholder="House number and street name">
-                  </div>
-                  </div>
-                  <div class="col-md-6">
-                      <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Appartment, suite, unit etc: (optional)">
-                  </div>
-                  </div>
-                  <div class="w-100"></div>
-                  <div class="col-md-6">
-                      <div class="form-group">
-                      <label for="towncity">Town / City</label>
-                    <input type="text" class="form-control" placeholder="">
-                  </div>
-                  </div>
-                  <div class="col-md-6">
-                      <div class="form-group">
-                          <label for="postcodezip">Postcode / ZIP *</label>
-                    <input type="text" class="form-control" placeholder="">
-                  </div>
-                  </div>
-                  <div class="w-100"></div>
-                  <div class="col-md-6">
-                  <div class="form-group">
-                      <label for="phone">Phone</label>
-                    <input type="text" class="form-control" placeholder="">
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group">
-                      <label for="emailaddress">Email Address</label>
-                    <input type="text" class="form-control" placeholder="">
-                  </div>
-              </div>
-              <div class="w-100"></div>
-              <div class="col-md-12">
-                  <div class="form-group mt-4">
-                                      <div class="radio">
-                                        <label class="mr-3"><input type="radio" name="optradio"> Create an Account? </label>
-                                        <label><input type="radio" name="optradio"> Ship to different address</label>
-                                      </div>
-                                  </div>
-              </div>
-              </div>
-            </form><!-- END -->
-
-
-
-            <div class="row mt-5 pt-3 d-flex">
-                <div class="col-md-6 d-flex">
-                    <div class="cart-detail cart-total bg-light p-3 p-md-4">
-                        <h3 class="billing-heading mb-4">Cart Total</h3>
-                        <p class="d-flex">
-                                  <span>Subtotal</span>
-                                  <span>$20.60</span>
-                              </p>
-                              <p class="d-flex">
-                                  <span>Delivery</span>
-                                  <span>$0.00</span>
-                              </p>
-                              <p class="d-flex">
-                                  <span>Discount</span>
-                                  <span>$3.00</span>
-                              </p>
-                              <hr>
-                              <p class="d-flex total-price">
-                                  <span>Total</span>
-                                  <span>$17.60</span>
-                              </p>
-                              </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="cart-detail bg-light p-3 p-md-4">
-                        <h3 class="billing-heading mb-4">Payment Method</h3>
-                                  <div class="form-group">
-                                      <div class="col-md-12">
-                                          <div class="radio">
-                                             <label><input type="radio" name="optradio" class="mr-2"> Direct Bank Tranfer</label>
-                                          </div>
-                                      </div>
-                                  </div>
-                                  <div class="form-group">
-                                      <div class="col-md-12">
-                                          <div class="radio">
-                                             <label><input type="radio" name="optradio" class="mr-2"> Check Payment</label>
-                                          </div>
-                                      </div>
-                                  </div>
-                                  <div class="form-group">
-                                      <div class="col-md-12">
-                                          <div class="radio">
-                                             <label><input type="radio" name="optradio" class="mr-2"> Paypal</label>
-                                          </div>
-                                      </div>
-                                  </div>
-                                  <div class="form-group">
-                                      <div class="col-md-12">
-                                          <div class="checkbox">
-                                             <label><input type="checkbox" value="" class="mr-2"> I have read and accept the terms and conditions</label>
-                                          </div>
-                                      </div>
-                                  </div>
-                                  <p><a href="#"class="btn btn-primary py-3 px-4">Place an order</a></p>
-                              </div>
-                </div>
-            </div>
-        </div> <!-- .col-md-8 -->
       </div>
     </div>
   </section> <!-- .section -->
 
+@endsection
+
+@section('script')
+  <script>
+    (function(){
+      // Create a Stripe client
+      var stripe = Stripe('{{ $_ENV["STRIPE_KEY"] }}');
+
+      // Create an instance of Elements
+      var elements = stripe.elements();
+
+      const cardButton = document.getElementById('complete-order');
+      const cardPaymentId = document.getElementById('paymentid');
+
+      // Custom styling can be passed to options when creating an Element.
+      // (Note that this demo uses a wider set of styles than the guide below.)
+      var style = {
+        base: {
+          color: '#32325d',
+          lineHeight: '18px',
+          fontFamily: '"Roboto", Helvetica Neue", Helvetica, sans-serif',
+          fontSmoothing: 'antialiased',
+          fontSize: '16px',
+          '::placeholder': {
+            color: '#aab7c4'
+          }
+        },
+        invalid: {
+          color: '#fa755a',
+          iconColor: '#fa755a'
+        }
+      };
+
+      // Create an instance of the card Element
+      var card = elements.create('card', {
+          style: style,
+          hidePostalCode: true
+      });
+
+      // Add an instance of the card Element into the `card-element` <div>
+      card.mount('#card-element');
+
+      // Handle real-time validation errors from the card Element.
+      card.addEventListener('change', function(event) {
+        
+        if (event.error) {
+          displayError.textContent = event.error.message;
+        } else {
+          displayError.textContent = '';
+        }
+      });
+
+      var form = document.getElementById('payment-form');
+
+      form.addEventListener('submit', async (e) => {
+        event.preventDefault();
+          
+      });
+
+      // Handle form submission
+      
+      form.addEventListener('submit', function(event) {
+
+        event.preventDefault();
+
+        document.getElementById('complete-order').disabled = true;
+
+        createPayment().then(function() {
+          var options = {
+            name: document.getElementById('name_on_card').value,
+            address_line1: document.getElementById('address').value,
+            address_city: document.getElementById('city').value,
+            address_state: document.getElementById('province').value, 
+            address_zip: document.getElementById('postalcode').value,
+          }
+
+          stripe.createToken(card, options).then(function(result) {
+            if (result.error) {
+              var errorElement = document.getElementById('card-errors');
+              errorElement.textContent = result.error.message;
+
+              document.getElementById('complete-order').disabled = false;
+            } else {
+              stripeTokenHandler(result.token);
+            }
+          });
+        })
+        
+      });
+
+      async function createPayment(){
+
+          const { paymentMethod, error } = await stripe.createPaymentMethod(
+              'card', card, {
+                  billing_details: { name: document.getElementById('name_on_card').value }
+              }
+          );
+      
+          if (error) {
+            console.log(error);
+          } else {
+            cardPaymentId.value = paymentMethod.id;
+          }
+      }
+
+      function stripeTokenHandler(token) {
+        var form = document.getElementById('payment-form');
+        var hiddenInput = document.createElement('input');
+        hiddenInput.setAttribute('type', 'hidden');
+        hiddenInput.setAttribute('name', 'stripeToken');
+        hiddenInput.setAttribute('value', token.id);
+
+        var hiddenInputPaymnetId = document.createElement('input');
+        hiddenInput.setAttribute('type', 'hidden');
+        hiddenInput.setAttribute('name', 'paymentId');
+        hiddenInput.setAttribute('value', cardPaymentId.value);
+
+        form.appendChild(hiddenInputPaymnetId);
+        form.appendChild(hiddenInput);
+
+        form.submit();
+      }
+
+    })();
+  </script>
 @endsection

@@ -33,7 +33,41 @@ class AdminService{
         ]);
     }
 
-    public function storeImage($image){
+    public function update(Request $data,int $id){
+        $product = Product::find($id);
+
+        $cover_path = $this->storeImage($data->file('product-cover'));
+
+        $images_json = [];
+        
+        if(!is_null($data->file('product-images'))){
+            foreach ($data->file('product-images') as $image) {
+                $image_path = $this->storeImage($image);
+                $images_json[] = $image_path;
+            }
+        }
+        
+        Product::find($id)->update(
+            ["cover" => $cover_path,
+            "images" => json_encode($images_json),
+            "product_name" => $data->{"product-name"},
+            "price" => (float) $data->{"product-price"},
+            "description" => $data->{"product-description"},
+            "size" => $data->{"product-size"},
+            "discount" => (int) $data->{"product-discount"},
+            "category_id" => (int) $data->{"product-caregory"}
+        ]);
+    }
+
+    public function delete($product_id){
+        $cartProduct = Product::where('id', $product_id)->first();
+
+        if(!is_null($cartProduct)){
+            $cartProduct->delete();
+        }
+    }
+
+    private function storeImage($image){
         $cover = uniqid() . '.' . $image->getClientOriginalExtension();
         $path = $image->storeAs('assets', $cover, 'public');
 
